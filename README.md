@@ -1,11 +1,16 @@
-# cjc101-fastapi
 
-一個基於 FastAPI 的簡易使用者資料管理 API，支援新增、查詢所有及查詢單一使用者功能。  
-專案已 Docker 化並可透過 docker-compose 快速啟動。
+# CJC101-FastAPI
 
----
+這是一個使用 FastAPI 建立的簡單 REST API 範例，功能包含：
 
-## 專案結構
+- 新增使用者資料（POST /user/add）
+- 查詢所有使用者資料（GET /users）
+- 依 ID 查詢單一使用者資料（GET /user/{user_id}）
+- 更新使用者資料（PUT /user/{user_id}）
+- 刪除使用者資料（DELETE /user/{user_id}）
+- 根路由簡單歡迎訊息（GET /）
+
+## 專案架構
 
 ```
 fastapi_app/
@@ -16,6 +21,12 @@ fastapi_app/
 ├── user_data/        # 使用者資料存放目錄（容器內）
 └── README.md
 ```
+
+- `main.py`：FastAPI 程式主檔
+- `Dockerfile`：建立 Python 環境及啟動 FastAPI
+- `docker-compose.yml`：Docker Compose 設定
+- `requirements.txt`：Python 相依套件
+- `user_data/`：用來儲存使用者 JSON 資料的資料夾（執行時自動建立）
 
 ---
 
@@ -37,55 +48,57 @@ http://localhost:8000/docs
 
 ## API 介面
 
-### 新增使用者
+1. API 服務預設監聽在 http://localhost:8000
 
-- 路徑：`POST /user/add`
-- 範例請求資料：
+2. 你可以用 curl 或 Postman 測試 API：
 
-```json
-{
-  "id": "001",
-  "name": "Alice",
-  "email": "alice@example.com"
-}
-```
-
-### 取得所有使用者
-
-- 路徑：`GET /users`
-
-### 取得指定使用者
-
-- 路徑：`GET /user/{user_id}`
-
----
-
-## 本機開發測試
-
-1. 安裝依賴套件：
+- 根路由：
 
 ```bash
-pip install -r requirements.txt
+curl http://localhost:8000/
 ```
 
-2. 啟動 FastAPI 服務：
+- 新增使用者：
 
 ```bash
-uvicorn main:app --reload
+curl -X POST http://localhost:8000/user/add -H "Content-Type: application/json" -d '{"id":"1","name":"Alice","email":"alice@example.com"}'
 ```
 
----
+- 查詢所有使用者：
+
+```bash
+curl http://localhost:8000/users
+```
+
+- 依 ID 查詢使用者：
+
+```bash
+curl http://localhost:8000/user/1
+```
+
+- 更新使用者：
+
+```bash
+curl -X PUT http://localhost:8000/user/1 -H "Content-Type: application/json" -d '{"id":"1","name":"Alice Updated","email":"alice_new@example.com"}'
+```
+
+- 刪除使用者：
+
+```bash
+curl -X DELETE http://localhost:8000/user/1
+```
 
 ## 注意事項
 
-- 使用者資料會儲存在 `user_data` 資料夾的 JSON 檔案中，請確保該資料夾存在且有寫入權限。
-- Docker 掛載 volume 時，確認資料夾同步正常。
-- 如果要新增或修改 API，請修改 `main.py`。
+- 使用者資料會以 JSON 檔案存放在 `user_data/` 資料夾中
+- 請確保容器有權限讀寫該資料夾
+- Docker 掛載 volume 時，確認資料夾同步正常
+- 若需修改監聽埠號，可調整 `docker-compose.yml` 及 `Dockerfile`
+- 如果要新增或修改 API，請修改 `main.py`
 
 ---
 
 ## 授權
 
 MIT License © 2025 [whfan96](https://github.com/whfan96)
-
 
